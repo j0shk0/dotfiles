@@ -54,3 +54,10 @@ colorscheme solarized8
 inoremap ( ()<Left>
 inoremap [ []<Left>
 inoremap { {}<Left>
+
+" Keybindings for NERDTree.
+" <C-n> means Ctrl + n btw.
+nnoremap <leader>n :NERDTreeFocus<CR>
+nnoremap <C-n> :NERDTree<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+nnoremap <C-f> :NERDTreeFind<CR>

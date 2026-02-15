@@ -5,7 +5,7 @@ My personal dotfiles. You can safely ignore this repo.
 ```bash
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 ```
-And ClangFormat is installed.
+And ClangFormat is installed:
 ```bash
 sudo apt-get install clang-format
 ```
