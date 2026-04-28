@@ -1,6 +1,8 @@
 # OS files
 .DS_Store
-Thumbs.db
+config
+.gitconfig
+IMG_3177.jpeg
 
 # Backup files
 *.bak

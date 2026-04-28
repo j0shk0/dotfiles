@@ -1,19 +1,16 @@
 syntax enable
-"If the line below is needed, uncomment line 50 && comment out 51.
-"set t_Co=256
-set background=light
+set background=dark
 set cursorline
 set number
 set expandtab
-" Careful with the setting below: Makefiles require tabs (!)
-"set tabstop=4
 set shiftwidth=4
 set autoindent
 set showmatch
 set incsearch
 set hlsearch
 
-set termguicolors
+" https://github.com/altercation/vim-colors-solarized
+colorscheme solarized
 
 " Plugins will be downloaded under the specified directory.
 call plug#begin('~/.vim/plugged')
@@ -23,7 +20,8 @@ Plug 'scrooloose/nerdtree' " open/close with :NERDTree
 Plug 'lervag/vimtex'
 Plug 'rhysd/vim-clang-format' " select code > :ClangFormat
 Plug 'sheerun/vim-polyglot'
-Plug 'lifepillar/vim-solarized8'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 " Disable Automatic VimTex Error Window
 " The window can be toggled manually with :copen and :cclose.
@@ -31,6 +29,10 @@ let g:vimtex_quickfix_mode = 0
 
 " List ends here. Plugins become visible to Vim after this call.
 call plug#end()
+
+" https://github.com/vim-airline/vim-airline-themes#vim-airline-themes--
+let g:airline_theme='solarized'
+let g:airline_powerline_fonts = 1
 
 autocmd BufNewFile,BufRead *.tex set filetype=tex
 
@@ -47,17 +49,20 @@ autocmd BufNewFile,BufRead *.tex set filetype=tex
 "  set background=dark
 "endif
 
-"let g:solarized_termcolors=256 "see line 2 for more information.
-colorscheme solarized8
-
-" Close Parathesis, Brachets, etc. automatically.
-inoremap ( ()<Left>
-inoremap [ []<Left>
-inoremap { {}<Left>
-
 " Keybindings for NERDTree.
-" <C-n> means Ctrl + n btw.
+" <C-n> means Ctrl + n btw. <CR> is a necessary suffix. Otherwise
+" the command ':NERDTreeFocus' would just be added to the commandline
+" and never executed because the 'Enter' equivalent would be missing. 
+" This is what <CR> is for. 
+" <leader> is mapped to '\' by default.
+"
+" When selecting files press 
+" 'i' to open in horizontal split
+" 'v' to open in vertical split
+" 't' to open in new tab
 nnoremap <leader>n :NERDTreeFocus<CR>
 nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
+let NERDTreeShowHidden=1
+

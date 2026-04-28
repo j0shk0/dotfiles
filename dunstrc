@@ -1,0 +1,12 @@
+# Global settings
+[global]
+background = "#000000"  # Black background
+foreground = "#FFFFFF"  # White text color
+padding = 25
+
+# Frame settings
+[frame]
+background = "#000000"  # Black background for frame
+foreground = "#FFFFFF"  # White border
+border_color = "#FFFFFF"  # White borders
+
