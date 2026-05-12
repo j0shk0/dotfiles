@@ -31,8 +31,21 @@ let g:vimtex_quickfix_mode = 0
 call plug#end()
 
 " https://github.com/vim-airline/vim-airline-themes#vim-airline-themes--
-let g:airline_theme='solarized'
 let g:airline_powerline_fonts = 1
+let g:airline_theme='solarized'
+let g:airline#extensions#tabline#enabled = 1
+
+" Powerline-style arrows for the tabline
+let g:airline#extensions#tabline#left_sep      = "\ue0b0"
+let g:airline#extensions#tabline#left_alt_sep  = "\ue0b1"
+let g:airline#extensions#tabline#right_sep     = "\ue0b2"
+let g:airline#extensions#tabline#right_alt_sep = "\ue0b3"
+
+" Nice formatting
+let g:airline#extensions#tabline#formatter      = 'unique_tail_improved'
+let g:airline#extensions#tabline#show_buffers   = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+let g:airline#extensions#tabline#show_close_button = 0
 
 autocmd BufNewFile,BufRead *.tex set filetype=tex
 
@@ -65,4 +78,8 @@ nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
 let NERDTreeShowHidden=1
+
+if $TERMINAL_EMULATOR =~? 'jediterm\|jetbrains'
+  silent! colorscheme shine
+endif
 

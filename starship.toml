@@ -4,15 +4,15 @@ continuation_prompt = "[.](bright-black) "
 
 [username]
 show_always = true
-style_user = "bold #586e75"
-style_root = "bold #dc322f"
+style_user = "bold #586e75"   # Solarized base01 (dark grey)
+style_root = "bold #dc322f"   # Solarized red — keeps root visually loud
 format = "[$user]($style)"
 disabled = false
 
 [hostname]
 ssh_only = false
 format = "[@$hostname]($style) "
-style = "bold #586e75"
+style = "bold #586e75"        # Solarized base01 (dark grey)
 trim_at = "."
 disabled = false
 
