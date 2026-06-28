@@ -1,5 +1,5 @@
 syntax enable
-set background=dark
+set background=light
 set cursorline
 set number
 set expandtab
@@ -9,8 +9,7 @@ set showmatch
 set incsearch
 set hlsearch
 
-" https://github.com/altercation/vim-colors-solarized
-colorscheme solarized
+colorscheme shine
 
 " Plugins will be downloaded under the specified directory.
 call plug#begin('~/.vim/plugged')
@@ -18,6 +17,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'SirVer/ultisnips'
 Plug 'scrooloose/nerdtree' " open/close with :NERDTree
 Plug 'lervag/vimtex'
+Plug 'kaarmu/typst.vim'
 Plug 'rhysd/vim-clang-format' " select code > :ClangFormat
 Plug 'sheerun/vim-polyglot'
 Plug 'vim-airline/vim-airline'
@@ -32,20 +32,8 @@ call plug#end()
 
 " https://github.com/vim-airline/vim-airline-themes#vim-airline-themes--
 let g:airline_powerline_fonts = 1
-let g:airline_theme='solarized'
+let g:airline_theme='base16'
 let g:airline#extensions#tabline#enabled = 1
-
-" Powerline-style arrows for the tabline
-let g:airline#extensions#tabline#left_sep      = "\ue0b0"
-let g:airline#extensions#tabline#left_alt_sep  = "\ue0b1"
-let g:airline#extensions#tabline#right_sep     = "\ue0b2"
-let g:airline#extensions#tabline#right_alt_sep = "\ue0b3"
-
-" Nice formatting
-let g:airline#extensions#tabline#formatter      = 'unique_tail_improved'
-let g:airline#extensions#tabline#show_buffers   = 1
-let g:airline#extensions#tabline#buffer_nr_show = 1
-let g:airline#extensions#tabline#show_close_button = 0
 
 autocmd BufNewFile,BufRead *.tex set filetype=tex
 
@@ -78,8 +66,4 @@ nnoremap <C-n> :NERDTree<CR>
 nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
 let NERDTreeShowHidden=1
-
-if $TERMINAL_EMULATOR =~? 'jediterm\|jetbrains'
-  silent! colorscheme shine
-endif
 

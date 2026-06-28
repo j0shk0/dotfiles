@@ -1,11 +1,7 @@
-# OS files
-.DS_Store
-config
-.gitconfig
-IMG_3177.jpeg
+# Hardware conf is unique to your system anyway.
+hardware-configuration.nix
 
-# Backup files
-*.bak
-*.swp
-*.swo
-*~
+.idea
+
+# Just use your own .gitconfig :)
+dotfiles/.gitconfig

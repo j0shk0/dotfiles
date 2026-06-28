@@ -1,39 +1,90 @@
-My personal dotfiles. You can safely ignore this repo unless you want to use e.g. vim the way I do.
+# Foreword
+
+These are my personal dotfiles. I am not maintaining them for anyone other than
+myself, so unless you want to use e.g. vim the way I do, you can ignore this repo.
+
+That said, feel free to copy anything you find useful.
+
+# What's in here
+
+- `configuration.nix` — my NixOS system configuration
+- `dotfiles/`
+  - `.vimrc`, `.bashrc`, `.tmux.conf` — editor & shell
+  - `config` — Sway (Wayland) config
+  - `foot.ini`, `dunstrc`, `i3status.conf`, `starship.toml` — terminal, notifications, status bar, prompt
+  - `.Xressources` — xterm colours (Solarized) - _this is not used anymore but I'll keep it anyway_.
+
+> Note: `hardware-configuration.nix` and my personal `.gitconfig` are 
+> **not** included (see `.gitignore`). You must provide your own.
 
 # Vim Setup
 
-This is a setup intended for Linux. It should work on MacOS and Windows as well using wsl.
-You need a version if vim that was compiled with Python support.
+This is a setup intended for Linux. It should work on macOS and Windows (via WSL)
+as well. You need a version of vim that was compiled with Python support.
 
-A few things must be setup for this configuration to work.
+A few things must be set up for this configuration to work.
 
-1. Download vim-plug which is a manager for vim plugins:
+- Download vim-plug, a plugin manager for vim:
 
 ```bash
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 ```
 
-2. I use ClangFormat. If you don't need it please delete the line containing `Plug 'rhysd/vim-clang-format'`. Otherwise please install it (by the example for apt-based distros or pip):
-
-```bash
+I use ClangFormat. If you don't need it, delete the line containing Plug `'rhysd/vim-clang-format'`. Otherwise install it (example for apt-based distros or pip):
+``` bash
 sudo apt-get install clang-format
-```
+``` 
 
-Or
+or
 
-```bash
+``` bash
 python -m pip install clang-format
 ```
 
-3. The whole setup is themed using [solarized light](https://ethanschoonover.com/solarized/). Please adjust your native terminal colors (example for `foot` is in my `foot.ini` file) and run the following:
+If you're unfamiliar with vim-plug: install the plugins by running `:PlugInstall`.
 
-```bash
-mkdir -p "$HOME/.vim/colors" && \
-curl -fLo "$HOME/.vim/colors/solarized.vim" \
-  https://raw.githubusercontent.com/altercation/vim-colors-solarized/master/colors/solarized.vim
+# NixOS Setup 
+
+This is a NixOS configuration that uses home-manager.
+
+Before it will work for you:
+
+- Add the home-manager channel (matching your NixOS release):
+
+``` bash
+   sudo nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+   sudo nix-channel --update
+``` 
+
+- Generate your own hardware config:
+
+``` bash
+sudo nixos-generate-config
 ```
 
-4. This last step is important: For some reason on my system light-mode is enabled using dark... This might not be the case on your machine - Therefore please change `set background=dark` to `set background=light`.
+Copy `configuration.nix` and the `dotfiles/` folder into `/etc/nixos/` (or symlink them).
+Edit `configuration.nix` for your machine. 
 
-5. In case you are unfamiliar with Plug. You can install the plug-ins by running `:PlugInstall`.
+**At minimum change**:
+
+- the username under `users.users` and `home-manager.users`
+- the hostname (`networking.hostName`)
+- timezone / locale / keyboard layout
+
+Create your own dotfiles/.gitconfig (it's git-ignored here), e.g.:
+
+``` ini
+   [user]
+       name = Your Name
+       email = you@example.com
+```
+
+Also, make sure to change systemStateVersion variables to match what is right for your system.
+If you install NixOS, today it's the most recent release.
+
+Then Rebuild:
+
+``` bash
+sudo nixos-rebuild switch
+```
 
