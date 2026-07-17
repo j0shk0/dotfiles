@@ -73,5 +73,17 @@ set -o vi
 # Avoid obsidian wayland error
 alias obsidian='obsidian --ozone-platform=x11'
 
+# The only sane editor out there that is not an OS at the same time.
+export EDITOR=vim
+
+# Wrapper for yazi
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+	command rm -f -- "$tmp"
+}
+
 # Make the terminal look pretty
 # fastfetch

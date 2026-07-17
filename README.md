@@ -63,13 +63,14 @@ sudo nixos-generate-config
 ```
 
 Copy `configuration.nix` and the `dotfiles/` folder into `/etc/nixos/` (or symlink them).
-Edit `configuration.nix` for your machine. 
+Edit `configuration.nix` for your machine.
 
 **At minimum change**:
 
 - the username under `users.users` and `home-manager.users`
 - the hostname (`networking.hostName`)
 - timezone / locale / keyboard layout
+- Remove the Swapfile line if you don't have that.
 
 Create your own dotfiles/.gitconfig (it's git-ignored here), e.g.:
 
@@ -85,6 +86,6 @@ If you install NixOS, today it's the most recent release.
 Then Rebuild:
 
 ``` bash
-sudo nixos-rebuild switch
+sudo nixos-rebuild switch -I nixos-config=path/to/configuration.nix
 ```
 

@@ -15,6 +15,7 @@ colorscheme shine
 call plug#begin('~/.vim/plugged')
 
 Plug 'SirVer/ultisnips'
+Plug 'Townk/vim-autoclose'
 Plug 'scrooloose/nerdtree' " open/close with :NERDTree
 Plug 'lervag/vimtex'
 Plug 'kaarmu/typst.vim'

@@ -17,8 +17,24 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  nixpkgs.config.permittedInsecurePackages = [ "pnpm-10.29.2" ];
+
+  nixpkgs.overlays = [
+    (final: prev: {
+      jetbrains = (import (builtins.fetchTarball {
+        url = "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
+      }) {
+        inherit (prev) system;
+        config.allowUnfree = true;
+      }).jetbrains;
+    })
+  ];
+
   # Enable usage of flakes
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
+  # Trading purity for compatibility...
+  programs.nix-ld.enable = true;
 
   # Audio: PipeWire + WirePlumber
   security.rtkit.enable = true;
@@ -77,7 +93,6 @@
       direnv
       nix-direnv
       brave
-      # librewolf        # currently marked as insecure.
       obsidian
       signal-desktop
       discord
@@ -93,7 +108,6 @@
       filezilla
       solaar
       foot
-      ranger
       pavucontrol
       veracrypt
       tipp10
@@ -106,8 +120,8 @@
       btop
     ];
 
-  # TODO After startup:
-  #   - Binaries for Factorio, TWS and Gateway.
+  # (works better than ranger out of the box on NixOS)
+  programs.yazi.enable = true;
 
   # Enable direnv
   programs.direnv.enable = true;
