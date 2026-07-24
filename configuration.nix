@@ -118,6 +118,10 @@
       jetbrains.rust-rover
       jetbrains.pycharm
       btop
+      # (factorio.override { 
+      #   username = "<your own user>";
+      #   token = "<your own token>";
+      # })
     ];
 
   # (works better than ranger out of the box on NixOS)
