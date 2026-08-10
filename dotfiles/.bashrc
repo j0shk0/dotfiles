@@ -85,5 +85,8 @@ function y() {
 	command rm -f -- "$tmp"
 }
 
+# vipdf
+alias vipdf='/home/j0shk0/Documents/code/rust/vipdf/result/bin/vipdf'
+
 # Make the terminal look pretty
 # fastfetch

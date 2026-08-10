@@ -23,6 +23,11 @@ Plug 'rhysd/vim-clang-format' " select code > :ClangFormat
 Plug 'sheerun/vim-polyglot'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'thomasfaingnaert/vim-lsp-snippets'
+Plug 'thomasfaingnaert/vim-lsp-ultisnips'
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
 
 " Disable Automatic VimTex Error Window
 " The window can be toggled manually with :copen and :cclose.
@@ -68,3 +73,36 @@ nnoremap <C-t> :NERDTreeToggle<CR>
 nnoremap <C-f> :NERDTreeFind<CR>
 let NERDTreeShowHidden=1
 
+" Autocompletion via asyncomplete
+" 
+" For C++ you might have to rerun the following from time to time:
+"
+" cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build
+" ln -s build/compile_commands.json .
+function! s:register(name, cmd, filetypes) abort
+  if executable(a:cmd[0])
+    call lsp#register_server({
+      \ 'name': a:name,
+      \ 'cmd': {server_info->a:cmd},
+      \ 'allowlist': a:filetypes,
+      \ })
+  endif
+endfunction
+
+augroup lsp_servers
+  au!
+  au User lsp_setup call s:register('rust-analyzer', ['rust-analyzer'], ['rust'])
+  au User lsp_setup call s:register('clangd', ['clangd', '--background-index'], ['c', 'cpp', 'objc'])
+  au User lsp_setup call s:register('pyright', ['pyright-langserver', '--stdio'], ['python'])
+  au User lsp_setup call s:register('elixir-ls', ['elixir-ls'], ['elixir', 'eelixir'])
+  au User lsp_setup call s:register('jdtls',
+  \ ['jdtls', '-data', expand('~/.cache/jdtls/') . fnamemodify(getcwd(), ':t')],
+  \ ['java'])
+augroup END
+
+" Enable Scroll in windows within Lsp
+"
+" scroll up with C-d
+" scroll down with C-f
+nnoremap <buffer> <expr> <C-f> lsp#scroll(+4)
+nnoremap <buffer> <expr> <C-d> lsp#scroll(-4)
