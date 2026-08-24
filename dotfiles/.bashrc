@@ -88,5 +88,8 @@ function y() {
 # vipdf
 alias vipdf='/home/j0shk0/Documents/code/rust/vipdf/result/bin/vipdf'
 
+# Fix unnecessary early direnv warning.
+export DIRENV_WARN_TIMEOUT=5m
+
 # Make the terminal look pretty
 # fastfetch

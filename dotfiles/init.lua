@@ -59,6 +59,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
+vim.opt.completeopt = { 'menu', 'menuone', 'noselect' }
+
 -- Diagnostics: no inline text, toggle everything with <leader>d - <leader> is "\" by default in vim.
 -- <C-w>d — floating window with the full diagnostic for the line under your cursor.
 -- ]d / [d — jump to next/previous diagnostic.

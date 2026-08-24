@@ -47,7 +47,7 @@
     wireplumber.enable = true;
   };
 
-  # start ssh-agent
+  # start ssh-agent.
   programs.ssh.startAgent = true;
 
   # fonts
@@ -69,7 +69,6 @@
 
   # system wide packages.
   environment.systemPackages = with pkgs; [ 
-      vim-full
       zip
       unzip
       git 
@@ -79,7 +78,6 @@
       wl-clipboard
       libnotify
       dunst
-      fuzzel
       fastfetch
       swayimg
       slurp
@@ -118,8 +116,9 @@
       jetbrains.pycharm
       jetbrains.rust-rover
       btop
+      foliate
       (factorio.override {
-         username = "j0shk0";
+         username = "<user_name>";
          token = "<ur token>";
       })
     ];
@@ -196,7 +195,7 @@
 
   # protonmail-bridge
   services.gnome.gnome-keyring.enable = true;
-  services.gnome.gcr-ssh-agent.enable = false;
+  services.gnome.gcr-ssh-agent.enable = false;  # Avoid conflicting two ssh agents.
   services.protonmail-bridge = { 
     enable = true;
     logLevel = "info";
@@ -207,6 +206,13 @@
     XCURSOR_SIZE = "32";
   };
 
+  # stock neovim for root
+  programs.neovim = {
+      enable = true;
+      viAlias = true;
+      vimAlias = true;
+    };
+
   # home-manager
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
@@ -216,6 +222,14 @@
     let
       dots = ./dotfiles;
     in {
+
+    # Enabling my own pdf editor.
+    xdg.desktopEntries.vipdf = {
+      name = "vipdf";
+      exec = "/home/j0shk0/Documents/code/rust/vipdf/result/bin/vipdf %f";
+      mimeType = [ "application/pdf" ];
+      terminal = false;
+    };
 
     home.pointerCursor = {
       package = pkgs.adwaita-icon-theme;
@@ -238,10 +252,55 @@
     home.packages = [ pkgs.tmux ];
 
     home.stateVersion = "25.11";
+
+    # Bye bye vim, hello neovim.
+    programs.neovim = {
+      enable = true;
+      defaultEditor = true;
+      viAlias = true;
+      vimAlias = true;
+      withRuby = false;
+      withPython3 = false;
+      initLua = builtins.readFile "${dots}/init.lua";   # was extraLuaConfig
+      extraPackages = with pkgs; [
+        clang-tools
+        rust-analyzer
+        pyright
+        elixir-ls
+        jdt-language-server
+      ];
+      plugins = with pkgs.vimPlugins; [
+        catppuccin-nvim
+        vimtex
+        typst-vim
+        nerdtree
+        lualine-nvim
+        nvim-autopairs
+        nvim-treesitter.withAllGrammars
+      ];
+    };
+
+    programs.fuzzel = {
+      enable = true;
+      settings = {
+        main = {
+          terminal = "${pkgs.foot}/bin/foot";
+          lines = 10;
+        };
+        colors = {
+          background = "1e1e2eff";
+          text = "cdd6f4ff";
+          match = "89b4faff";
+          selection = "585b70ff";
+          selection-text = "cdd6f4ff";
+          selection-match = "89b4faff";
+          border = "89b4faff";
+        };
+      };
+    };
     
     home.file = {
       ".gitconfig".source = "${dots}/.gitconfig";
-      ".vimrc".source = "${dots}/.vimrc";
     };
 
     xdg.configFile = {

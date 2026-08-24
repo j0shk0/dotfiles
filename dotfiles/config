@@ -37,7 +37,7 @@ input * {
 }
 
 # Set Background.
-output * bg "~/Pictures/IMG_3177.jpeg" fill
+output * bg "~/Pictures/IMG_3177_Mocha.png" fill
 
 # THIS IS INSANELY IMPORTANT - DEFAULT IS US WHICH IS ONE OF MY PERSONAL HELLS.
 input "type:keyboard" {
@@ -210,20 +210,40 @@ bar {
   tray_output none
 
     colors {
-        focused_workspace #ffffff #000000 #ffffff
-        urgent_workspace #ffffff #000000 #ffffff
+        background #1e1e2e
+        statusline #cdd6f4
+        separator  #585b70
+
+        #                  border  background text
+        focused_workspace  #89b4fa #89b4fa    #1e1e2e
+        active_workspace   #313244 #313244    #cdd6f4
+        inactive_workspace #1e1e2e #1e1e2e    #6c7086
+        urgent_workspace   #f38ba8 #f38ba8    #1e1e2e
+        binding_mode       #fab387 #fab387    #1e1e2e
     }
 }   
-# old font: pango:DejaVu Sans Mono
 
-# Make Border of current (focused) window black
-client.focused #000000 #000000 #ffffff #000000 #000000
+# Catppuccin Mocha colors for windows
+set $base   #1e1e2e
+set $text   #cdd6f4
+set $blue   #89b4fa
+set $surface0 #313244
+set $overlay0 #6c7086
+set $red    #f38ba8
+
+#                       border    bg        text    indicator child_border
+client.focused          $blue     $blue     $base   $blue     $blue
+client.focused_inactive $surface0 $surface0 $text   $surface0 $surface0
+client.unfocused        $surface0 $base     $overlay0 $surface0 $surface0
+client.urgent           $red      $red      $base   $red      $red
+client.placeholder      $base     $base     $text   $base     $base
+client.background       $base
 
 # Fast shutdown
 mode "[r]eboot || [s]hutdown || [l]ock" {
   bindsym r exec --no-startup-id systemctl reboot
   bindsym s exec --no-startup-id systemctl poweroff
-  bindsym l exec --no-startup-id swaylock --image "~/Pictures/IMG_3177.jpeg" -F -f
+  bindsym l exec --no-startup-id swaylock --image "~/Pictures/IMG_3177_dim.jpeg" -F -f
   bindsym Escape mode "default"
   bindsym Return mode "default"
 }

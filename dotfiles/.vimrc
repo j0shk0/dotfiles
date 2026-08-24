@@ -59,7 +59,7 @@ autocmd BufNewFile,BufRead *.tex set filetype=tex
 " Keybindings for NERDTree.
 " <C-n> means Ctrl + n btw. <CR> is a necessary suffix. Otherwise
 " the command ':NERDTreeFocus' would just be added to the commandline
-" and never executed because the 'Enter' equivalent would be missing. 
+" and never executed because the 'Enter' equivalent would be missing.
 " This is what <CR> is for. 
 " <leader> is mapped to '\' by default.
 "
@@ -79,30 +79,30 @@ let NERDTreeShowHidden=1
 "
 " cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build
 " ln -s build/compile_commands.json .
-function! s:register(name, cmd, filetypes) abort
-  if executable(a:cmd[0])
-    call lsp#register_server({
-      \ 'name': a:name,
-      \ 'cmd': {server_info->a:cmd},
-      \ 'allowlist': a:filetypes,
-      \ })
-  endif
-endfunction
-
-augroup lsp_servers
-  au!
-  au User lsp_setup call s:register('rust-analyzer', ['rust-analyzer'], ['rust'])
-  au User lsp_setup call s:register('clangd', ['clangd', '--background-index'], ['c', 'cpp', 'objc'])
-  au User lsp_setup call s:register('pyright', ['pyright-langserver', '--stdio'], ['python'])
-  au User lsp_setup call s:register('elixir-ls', ['elixir-ls'], ['elixir', 'eelixir'])
-  au User lsp_setup call s:register('jdtls',
-  \ ['jdtls', '-data', expand('~/.cache/jdtls/') . fnamemodify(getcwd(), ':t')],
-  \ ['java'])
-augroup END
+"function! s:register(name, cmd, filetypes) abort
+"  if executable(a:cmd[0])
+"    call lsp#register_server({
+"      \ 'name': a:name,
+"      \ 'cmd': {server_info->a:cmd},
+"      \ 'allowlist': a:filetypes,
+"      \ })
+"  endif
+"endfunction
+"
+"augroup lsp_servers
+"  au!
+"  au User lsp_setup call s:register('rust-analyzer', ['rust-analyzer'], ['rust'])
+"  au User lsp_setup call s:register('clangd', ['clangd', '--background-index'], ['c', 'cpp', 'objc'])
+"  au User lsp_setup call s:register('pyright', ['pyright-langserver', '--stdio'], ['python'])
+"  au User lsp_setup call s:register('elixir-ls', ['elixir-ls'], ['elixir', 'eelixir'])
+"  au User lsp_setup call s:register('jdtls',
+"  \ ['jdtls', '-data', expand('~/.cache/jdtls/') . fnamemodify(getcwd(), ':t')],
+"  \ ['java'])
+"augroup END
 
 " Enable Scroll in windows within Lsp
 "
 " scroll up with C-d
 " scroll down with C-f
-nnoremap <buffer> <expr> <C-f> lsp#scroll(+4)
-nnoremap <buffer> <expr> <C-d> lsp#scroll(-4)
+"nnoremap <buffer> <expr> <C-f> lsp#scroll(+4)
+"nnoremap <buffer> <expr> <C-d> lsp#scroll(-4)
