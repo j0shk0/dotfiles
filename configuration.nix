@@ -69,6 +69,7 @@
 
   # system wide packages.
   environment.systemPackages = with pkgs; [ 
+      vim
       zip
       unzip
       git 
@@ -206,13 +207,6 @@
     XCURSOR_SIZE = "32";
   };
 
-  # stock neovim for root
-  programs.neovim = {
-      enable = true;
-      viAlias = true;
-      vimAlias = true;
-    };
-
   # home-manager
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
@@ -253,32 +247,7 @@
 
     home.stateVersion = "25.11";
 
-    # Bye bye vim, hello neovim.
-    programs.neovim = {
-      enable = true;
-      defaultEditor = true;
-      viAlias = true;
-      vimAlias = true;
-      withRuby = false;
-      withPython3 = false;
-      initLua = builtins.readFile "${dots}/init.lua";   # was extraLuaConfig
-      extraPackages = with pkgs; [
-        clang-tools
-        rust-analyzer
-        pyright
-        elixir-ls
-        jdt-language-server
-      ];
-      plugins = with pkgs.vimPlugins; [
-        catppuccin-nvim
-        vimtex
-        typst-vim
-        nerdtree
-        lualine-nvim
-        nvim-autopairs
-        nvim-treesitter.withAllGrammars
-      ];
-    };
+    programs.vim.enable = true;
 
     programs.fuzzel = {
       enable = true;
@@ -301,6 +270,7 @@
     
     home.file = {
       ".gitconfig".source = "${dots}/.gitconfig";
+      ".vimrc".source = "${dots}/.vimrc";
     };
 
     xdg.configFile = {
