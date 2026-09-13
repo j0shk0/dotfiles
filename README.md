@@ -19,25 +19,7 @@ That said, feel free to copy anything you find useful.
 > Same for the Factorio credentials. 
 > Since recently the whole setup is using Catppuccin Mocha as theme.
 
-# Neovim Setup
-
-I used to run Vim; I've since switched to Neovim. The editor is now fully managed by home-manager (see `programs.neovim`
-in `configuration.nix`), so there is no manual plugin manager (vim-plug is gone) and no `.vimrc` symlink anymore. The
-whole configuration lives in `dotfiles/init.lua`.
-
-Because everything is declared in Nix, you don't need to install plugins or language servers by hand — they are pulled
-in via `extraPackages` and `plugins`. LSP servers currently wired up: `clang-tools` (clangd), `rust-analyzer`,
-`pyright`, `elixir-ls`, and `jdt-language-server`. Each server is only enabled if its executable is available.
-
-Formatting no longer relies on the `vim-clang-format` plugin: it's handled by the LSP (`<leader>f`), and `clangd` reads
-your `.clang-format`. `<leader>` is `\` by default.
-
-If you don't use Nix/home-manager, point your Neovim config at `init.lua` and provide the language servers listed above
-yourself.
-
 # Vim Setup
-
-As mentioned, I don't use vim anymore. However, I left the `.vimrc` here so you can still use it.
 
 This is a setup intended for Linux. It should work on macOS and Windows (via WSL)
 as well. You need a version of vim that was compiled with Python support.

@@ -20,8 +20,19 @@
   nixpkgs.config.permittedInsecurePackages = [ "pnpm-10.29.2" ];
 
   nixpkgs.overlays = [
-    (final: prev: {
-      jetbrains = (import (builtins.fetchTarball {
+      # Fix bug that does not display green and red lock in text prompt.
+      (final: prev: {
+        iamb = prev.iamb.overrideAttrs (old: {
+          postPatch = (old.postPatch or "") + ''
+            substituteInPlace src/windows/room/chat.rs \
+              --replace-fail '\u{1F512}\u{FE0E}' '\u{F023}' \
+              --replace-fail '\u{1F513}\u{FE0E}' '\u{F09C}'
+          '';
+        });
+      })
+      # Most recent jetbrains IDE versions.
+      (final: prev: {
+        jetbrains = (import (builtins.fetchTarball {
         url = "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
       }) {
         inherit (prev) system;
@@ -69,7 +80,7 @@
 
   # system wide packages.
   environment.systemPackages = with pkgs; [ 
-      vim
+      vim-full
       zip
       unzip
       git 
@@ -122,6 +133,8 @@
          username = "<user_name>";
          token = "<ur token>";
       })
+      age
+      timewarrior
     ];
 
   # (works better than ranger out of the box on NixOS)
@@ -207,6 +220,8 @@
     XCURSOR_SIZE = "32";
   };
 
+  documentation.man.cache.enable = true;
+
   # home-manager
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
@@ -246,8 +261,6 @@
     home.packages = [ pkgs.tmux ];
 
     home.stateVersion = "25.11";
-
-    programs.vim.enable = true;
 
     programs.fuzzel = {
       enable = true;

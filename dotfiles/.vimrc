@@ -4,12 +4,14 @@ set cursorline
 set number
 set expandtab
 set shiftwidth=4
+set softtabstop=4
 set autoindent
 set showmatch
 set incsearch
 set hlsearch
 
-colorscheme shine
+colorscheme catppuccin  " use shine if version <9.2
+
 
 " Plugins will be downloaded under the specified directory.
 call plug#begin('~/.vim/plugged')
@@ -38,7 +40,7 @@ call plug#end()
 
 " https://github.com/vim-airline/vim-airline-themes#vim-airline-themes--
 let g:airline_powerline_fonts = 1
-let g:airline_theme='base16'
+let g:airline_theme='silver'
 let g:airline#extensions#tabline#enabled = 1
 
 autocmd BufNewFile,BufRead *.tex set filetype=tex
@@ -60,10 +62,10 @@ autocmd BufNewFile,BufRead *.tex set filetype=tex
 " <C-n> means Ctrl + n btw. <CR> is a necessary suffix. Otherwise
 " the command ':NERDTreeFocus' would just be added to the commandline
 " and never executed because the 'Enter' equivalent would be missing.
-" This is what <CR> is for. 
+" This is what <CR> is for.
 " <leader> is mapped to '\' by default.
 "
-" When selecting files press 
+" When selecting files press
 " 'i' to open in horizontal split
 " 'v' to open in vertical split
 " 't' to open in new tab
@@ -106,3 +108,18 @@ augroup END
 " scroll down with C-f
 nnoremap <buffer> <expr> <C-f> lsp#scroll(+4)
 nnoremap <buffer> <expr> <C-d> lsp#scroll(-4)
+
+" Diagnostics on/off via '\d'
+function! s:diag_toggle() abort
+  let b:diag_off = !get(b:, 'diag_off', 0)
+  if b:diag_off
+    call lsp#disable_diagnostics_for_buffer()
+    echo 'LSP diagnostics: off'
+  else
+    call lsp#enable_diagnostics_for_buffer()
+    echo 'LSP diagnostics: on'
+  endif
+endfunction
+
+command! DiagToggle call <SID>diag_toggle()
+nnoremap <silent> <Leader>d :DiagToggle<CR>

@@ -1,0 +1,285 @@
+# ~/.config/nvim/UltiSnips/typst.snippets
+# Typst port of the LaTeX/UltiSnips set. Mirrors the same triggers.
+#
+# Math-zone detection reads the syntax stack under the cursor (the same
+# trick vimtex#syntax#in_mathzone uses internally), so it works in plain
+# Vim with no Treesitter. It needs `:syntax on` plus a Typst syntax plugin
+# that defines a math region, e.g. kaarmu/typst.vim. A no-plugin fallback
+# is described at the bottom of this file.
+
+global !p
+def math():
+	import vim
+	# True when the cursor sits in a Typst math zone ($...$): any syntax
+	# group under the cursor whose name contains "math" (case-insensitive).
+	# col('.')-1 tests the char just before the cursor (i.e. the trigger).
+	expr = "len(filter(map(synstack(line('.'), max([col('.')-1, 1])), 'synIDattr(v:val, ''name'')'), 'v:val =~? ''math''')) > 0"
+	try:
+		return vim.eval(expr) in ("1", 1)
+	except Exception:
+		return False
+endglobal
+
+# ──────────────────────────────────────────────────────────────────────
+# 1. Document templates
+# ──────────────────────────────────────────────────────────────────────
+
+snippet standard "standard Typst document" i
+#set page(paper: "a4", margin: 2cm)
+#set text(size: 11pt, lang: "en")
+#set par(justify: true, first-line-indent: 1.5em)
+#set heading(numbering: none)
+
+#align(center)[
+  #text(17pt, weight: "bold")[$3] \
+  $2 \
+  $1
+]
+#line(length: 100%, stroke: 0.5pt)
+
+$0
+endsnippet
+
+snippet homework "homework Typst document" i
+#set page(paper: "a4", margin: 2.5cm)
+#set text(size: 11pt, lang: "en")
+#set par(justify: true, first-line-indent: 1.5em)
+#set heading(numbering: none)
+
+#let module    = "$1"
+#let title     = "$2"
+#let semester  = "$3"
+#let fromdate  = "$4"
+#let todate    = "$5"
+#let author    = "Joshua Spingler"
+
+#align(center)[#text(16pt, weight: "bold")[#title]]
+
+#grid(
+  columns: (1fr, 1fr),
+  align: (left, right),
+  [#module],   [#author],
+  [#semester], [#fromdate -- #todate],
+)
+#line(length: 100%, stroke: 0.5pt)
+
+$0
+endsnippet
+
+# ──────────────────────────────────────────────────────────────────────
+# 1b. Headings  (numbering: none ≈ \section*)
+# ──────────────────────────────────────────────────────────────────────
+
+snippet sec "section" i
+= $0
+endsnippet
+
+snippet sub "subsection" i
+== $0
+endsnippet
+
+# ──────────────────────────────────────────────────────────────────────
+# 1c. Math toggles
+# ──────────────────────────────────────────────────────────────────────
+
+# Inline math: $x$
+snippet mk "inline math" A
+\$${1}\$$0
+endsnippet
+
+# Block math: a $ with surrounding whitespace renders as a display block.
+snippet dm "display math" A
+\$
+$1
+\$$0
+endsnippet
+
+# Aligned block: use & to align and a single backslash for a line break.
+snippet align "aligned equations" i
+\$
+$1 &= $2 \
+$0
+\$
+endsnippet
+
+# ──────────────────────────────────────────────────────────────────────
+# 2. In-math snippets
+# ──────────────────────────────────────────────────────────────────────
+
+# Superscript after a token:  X rd  ->  X^(...)
+context "math()"
+snippet "([A-Za-z0-9\(\)\{\}\[\]])rd" "superscript" rA
+`!p snip.rv = match.group(1)`^($0)
+endsnippet
+
+# Subscript after a token:  X__  ->  X_(...)
+context "math()"
+snippet "([A-Za-z0-9\(\)\{\}\[\]])__" "subscript" rA
+`!p snip.rv = match.group(1)`_($0)
+endsnippet
+
+# Upright text in math (Typst uses bare quoted strings)
+context "math()"
+snippet text "text field" iA
+"$1"$0
+endsnippet
+
+context "math()"
+snippet inn "in" iA
+in $0
+endsnippet
+
+# Set braces render literally in Typst math
+context "math()"
+snippet set "set" i
+{ $1 }$0
+endsnippet
+
+context "math()"
+snippet ... "dots" i
+dots $0
+endsnippet
+
+# Blackboard bold. Note: NN ZZ QQ RR CC are built in, so only P needs help.
+context "math()"
+snippet PP "blackboard P" iA
+bb(P)$0
+endsnippet
+
+context "math()"
+snippet bb "blackboard bold" iA
+bb($1)$0
+endsnippet
+
+# ── Matrices ──────────────────────────────────────────────────────────
+# rows separated by ;  columns by ,  delim sets the fence
+
+context "math()"
+snippet matrix "matrix (3x3, brackets)" iA
+mat(
+  delim: "[",
+  $1, $2, $3;
+  $4, $5, $6;
+  $7, $8, $9
+)$0
+endsnippet
+
+context "math()"
+snippet pmatrix "parenthesised matrix" iA
+mat(
+  $1, $2, $3;
+  $4, $5, $6;
+  $7, $8, $9
+)$0
+endsnippet
+
+context "math()"
+snippet vmatrix "determinant" iA
+mat(
+  delim: "|",
+  $1, $2, $3;
+  $4, $5, $6;
+  $7, $8, $9
+)$0
+endsnippet
+
+context "math()"
+snippet cmatrix "custom matrix (2x2)" iA
+mat(
+  delim: "[",
+  ${1:a}, ${2:b};
+  ${3:c}, ${4:d}
+)$0
+endsnippet
+
+# "Small"/inline matrix without fences
+context "math()"
+snippet imatrix "inline matrix" iA
+mat(delim: #none, $1, $2; $3, $4)$0
+endsnippet
+
+# Column vector (vec is built in)
+context "math()"
+snippet vec "vector (column)" iA
+vec($1, $2, $3)$0
+endsnippet
+
+context "math()"
+snippet diag "diagonal matrix" iA
+mat(
+  delim: "[",
+  $1, 0, 0;
+  0, $2, 0;
+  0, 0, $3
+)$0
+endsnippet
+
+context "math()"
+snippet id "identity matrix (3x3)" iA
+mat(
+  delim: "[",
+  1, 0, 0;
+  0, 1, 0;
+  0, 0, 1
+)$0
+endsnippet
+
+# Augmented matrix: augment: #n draws a vertical rule after column n.
+context "math()"
+snippet aug "augmented matrix" iA
+mat(
+  delim: "[",
+  augment: #${1:2},
+  $2, $3, $4;
+  $5, $6, $7
+)$0
+endsnippet
+
+# ── Constructions ─────────────────────────────────────────────────────
+
+context "math()"
+snippet frac "fraction" iA
+frac($1, $2)$0
+endsnippet
+
+context "math()"
+snippet binom "binomial coefficient" iA
+binom($1, $2)$0
+endsnippet
+
+context "math()"
+snippet sqrt "square root" iA
+sqrt($1)$0
+endsnippet
+
+context "math()"
+snippet ^ "superscript" iA
+^($1)$0
+endsnippet
+
+context "math()"
+snippet _ "subscript" iA
+_($1)$0
+endsnippet
+
+# ──────────────────────────────────────────────────────────────────────
+# NATIVE IN TYPST — no snippet needed:
+#
+#   Greek letters: type the name directly in math mode and it renders.
+#     alpha beta gamma delta epsilon theta lambda mu xi pi rho sigma
+#     tau phi chi psi omega ... Capitalise for uppercase (Omega, Gamma).
+#     Variant forms: epsilon.alt, phi.alt, etc.
+#
+#   Number sets (blackboard bold) are built in:
+#     NN  ZZ  QQ  RR  CC      (use bb(P) for the others, see above)
+#
+#   Membership/operators: in, subset, union, sum, integral, dots ...
+#
+# No-plugin fallback for math(): if you don't load a Typst syntax plugin,
+# replace the body of math() with a $-counting heuristic — count unescaped
+# '
+# ──────────────────────────────────────────────────────────────────────
+# from the start of the buffer up to the cursor and treat an odd count
+# as "in math". It is less robust across code blocks and strings, so the
+# syntax-stack version above is preferred whenever syntax highlighting is on.
+# ──────────────────────────────────────────────────────────────────────
