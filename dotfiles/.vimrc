@@ -10,12 +10,13 @@ set showmatch
 set incsearch
 set hlsearch
 
-colorscheme catppuccin  " use shine if version <9.2
+" Uncomment if you use minimal version
+" colorscheme catppuccin  " use shine if version <9.2
 
+" ==== Delete everything below for minimal version ====
 
 " Plugins will be downloaded under the specified directory.
 call plug#begin('~/.vim/plugged')
-
 Plug 'SirVer/ultisnips'
 Plug 'Townk/vim-autoclose'
 Plug 'scrooloose/nerdtree' " open/close with :NERDTree
@@ -25,22 +26,37 @@ Plug 'rhysd/vim-clang-format' " select code > :ClangFormat
 Plug 'sheerun/vim-polyglot'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'catppuccin/vim', { 'as': 'catppuccin' }
 Plug 'prabirshrestha/vim-lsp'
 Plug 'thomasfaingnaert/vim-lsp-snippets'
 Plug 'thomasfaingnaert/vim-lsp-ultisnips'
 Plug 'prabirshrestha/asyncomplete.vim'
 Plug 'prabirshrestha/asyncomplete-lsp.vim'
+" List ends here. Plugins become visible to Vim after this call.
+call plug#end()
+
+" Move UltiSnips off Tab so it stops overriding your mapping
+let g:UltiSnipsExpandTrigger = "<C-l>"
+
+function! TabOrSnippet() abort
+  call UltiSnips#ExpandSnippet()
+  return g:ulti_expand_res ? '' : "\<Tab>"
+endfunction
+
+" Shift-Tab move through the completion menu and Tab to accept it.
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<C-R>=TabOrSnippet()\<CR>"
 
 " Disable Automatic VimTex Error Window
 " The window can be toggled manually with :copen and :cclose.
 let g:vimtex_quickfix_mode = 0
 
-" List ends here. Plugins become visible to Vim after this call.
-call plug#end()
+if (has('termguicolors'))
+  set termguicolors
+endif
 
-" https://github.com/vim-airline/vim-airline-themes#vim-airline-themes--
+colorscheme catppuccin_latte
 let g:airline_powerline_fonts = 1
-let g:airline_theme='silver'
+let g:airline_theme = 'catppuccin_latte'
 let g:airline#extensions#tabline#enabled = 1
 
 autocmd BufNewFile,BufRead *.tex set filetype=tex
@@ -76,7 +92,7 @@ nnoremap <C-f> :NERDTreeFind<CR>
 let NERDTreeShowHidden=1
 
 " Autocompletion via asyncomplete
-" 
+"
 " For C++ you might have to rerun the following from time to time:
 "
 " cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build

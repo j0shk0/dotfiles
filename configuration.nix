@@ -77,7 +77,7 @@
       };
     };
   };
-
+  
   # system wide packages.
   environment.systemPackages = with pkgs; [ 
       vim-full
@@ -110,7 +110,6 @@
       wireshark
       keepassxc
       cryptomator
-      mullvad-vpn
       mullvad-browser
       tor-browser
       anki
@@ -130,15 +129,16 @@
       btop
       foliate
       (factorio.override {
-         username = "<user_name>";
-         token = "<ur token>";
+         username = "<username>";
+         token = "<token>";
       })
       age
       timewarrior
+      (pkgs.ncspot.override { withCover = true; })
+      prismlauncher
+      freetube
+      wireguard-tools
     ];
-
-  # (works better than ranger out of the box on NixOS)
-  programs.yazi.enable = true;
 
   # Enable direnv
   programs.direnv.enable = true;
@@ -166,6 +166,23 @@
 
   # Configure network connections interactively with nmcli or nmtui.
   networking.networkmanager.enable = true;
+
+  networking.wg-quick.interfaces.wg0 = {
+    address = [ "10.100.0.2/32" ];
+    privateKeyFile = "/etc/wireguard/laptop.key";
+    autostart = false;
+    mtu = 1280;
+
+    peers = [
+      {
+        publicKey = "5L6BOr8GnX58PIM+w4f6xSJ9x+Dpyoe445NBVZRD1nU=";
+        presharedKeyFile = "/etc/wireguard/psk";
+        allowedIPs = [ "10.100.0.0/24" ];
+        endpoint = "j0shk0.com:51820";
+        persistentKeepalive = 25;
+      }
+    ];
+  };
 
   # Set your time zone.
   time.timeZone = "Europe/Berlin";
@@ -279,6 +296,18 @@
           border = "89b4faff";
         };
       };
+    };
+
+    programs.yazi = {
+        enable = true;
+        shellWrapperName = "y";
+        flavors.catppuccin-mocha = "${pkgs.fetchFromGitHub {
+          owner = "yazi-rs";
+          repo = "flavors";
+          rev = "20b47bfd78880c2674899597fd26bc01b21ff48c";
+          hash = "sha256-NGnfrQdsnQITKCZ0oh6DCxeCR2ozJoPAZetsi3ghHAI=";
+        }}/catppuccin-mocha.yazi";
+        theme.flavor.dark = "catppuccin-mocha";
     };
     
     home.file = {

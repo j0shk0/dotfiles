@@ -50,6 +50,17 @@ If you're unfamiliar with vim-plug: install the plugins by running `:PlugInstall
 The whole setup for autocomplete using `asyncomplete` is commented out. If you want to use it, you also need the LSP 
 servers as I already mentioned in the previous chapter.
 
+# Tmux
+
+For tmux you need to run the following:
+
+```bash
+    mkdir -p ~/.config/tmux/plugins/catppuccin
+    git clone -b v2.3.0 https://github.com/catppuccin/tmux.git ~/.config/tmux/plugins/catppuccin/tmux
+```
+
+If you don't want that please delete everything below `# tmux catppuccin theme` in `tmux.conf`.
+
 # NixOS Setup
 
 This is a NixOS configuration that uses home-manager.
