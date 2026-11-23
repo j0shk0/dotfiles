@@ -1,10 +1,16 @@
+# Utility files.
+.idea
+
 # Hardware conf is unique to your system anyway.
 hardware-configuration.nix
 
-# University wifi
+# University wifi.
 HARICA-TLS-Root-2021-RSA.pem
 
-.idea
-
-# Just use your own .gitconfig :)
+# Just use your own.
 dotfiles/.gitconfig
+dotfiles/.taskrc
+factorio.nix
+
+# Just use typst.
+dotfiles/tex.snippets

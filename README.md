@@ -16,7 +16,7 @@ That said, feel free to copy anything you find useful.
 
 > Note: `hardware-configuration.nix` and my personal `.gitconfig` are
 > **not** included (see `.gitignore`). You must provide your own.
-> Same for the Factorio credentials. 
+> Same for the Factorio module imported. 
 > Since recently the whole setup is using Catppuccin Mocha as theme.
 
 # Vim Setup

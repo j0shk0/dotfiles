@@ -2,47 +2,68 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
+let
+  vipdf = pkgs.callPackage ./pkgs/vipdf/package.nix { withPdfium = true; };
+  yafca = pkgs.callPackage ./pkgs/yafca/package.nix { };
+  math-templates = pkgs.callPackage ./pkgs/math-templates/package.nix { };
+in
 {
 
   # First things first...
   programs.nano.enable = false;
-  
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      <home-manager/nixos>
-    ];
+
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    <home-manager/nixos>
+    ./neovim.nix
+    ./factorio.nix
+  ];
+
+  dotfiles.neovim.enable = true;
 
   nixpkgs.config.allowUnfree = true;
 
   nixpkgs.config.permittedInsecurePackages = [ "pnpm-10.29.2" ];
 
   nixpkgs.overlays = [
-      # Fix bug that does not display green and red lock in text prompt.
-      (final: prev: {
-        iamb = prev.iamb.overrideAttrs (old: {
-          postPatch = (old.postPatch or "") + ''
-            substituteInPlace src/windows/room/chat.rs \
-              --replace-fail '\u{1F512}\u{FE0E}' '\u{F023}' \
-              --replace-fail '\u{1F513}\u{FE0E}' '\u{F09C}'
-          '';
-        });
-      })
-      # Most recent jetbrains IDE versions.
-      (final: prev: {
-        jetbrains = (import (builtins.fetchTarball {
-        url = "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
-      }) {
-        inherit (prev) system;
-        config.allowUnfree = true;
-      }).jetbrains;
+    # Fix bug that does not display green and red lock in text prompt.
+    (final: prev: {
+      iamb = prev.iamb.overrideAttrs (old: {
+        postPatch = (old.postPatch or "") + ''
+          substituteInPlace src/windows/room/chat.rs \
+            --replace-fail '\u{1F512}\u{FE0E}' '\u{F023}' \
+            --replace-fail '\u{1F513}\u{FE0E}' '\u{F09C}'
+        '';
+      });
+    })
+    # Most recent jetbrains IDE versions.
+    (final: prev: {
+      jetbrains =
+        (import
+          (builtins.fetchTarball {
+            url = "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
+          })
+          {
+            inherit (prev) system;
+            config.allowUnfree = true;
+          }
+        ).jetbrains;
     })
   ];
 
   # Enable usage of flakes
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Trading purity for compatibility...
   programs.nix-ld.enable = true;
@@ -77,75 +98,86 @@
       };
     };
   };
-  
+
+  # Allow keychron launcher
+  services = {
+    udev.extraRules = ''
+      # Allow access to Keychron keyboards for QMK/VIA
+      KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3434", MODE="0666", TAG+="uaccess"
+    '';
+  };
+
   # system wide packages.
-  environment.systemPackages = with pkgs; [ 
-      vim-full
-      zip
-      unzip
-      git 
-      rsync
-      wget
-      imagemagick
-      wl-clipboard
-      libnotify
-      dunst
-      fastfetch
-      swayimg
-      slurp
-      texliveFull
-      perf
-      valgrind
-      exfatprogs
-      i3status
-      swaybg
-      python3
-      direnv
-      nix-direnv
-      brave
-      obsidian
-      signal-desktop
-      discord
-      spotify
-      wireshark
-      keepassxc
-      cryptomator
-      mullvad-browser
-      tor-browser
-      anki
-      thunderbird
-      filezilla
-      solaar
-      foot
-      pavucontrol
-      veracrypt
-      tipp10
-      iamb
-      jetbrains.clion
-      jetbrains.idea
-      jetbrains.webstorm
-      jetbrains.pycharm
-      jetbrains.rust-rover
-      btop
-      foliate
-      (factorio.override {
-         username = "<username>";
-         token = "<token>";
-      })
-      age
-      timewarrior
-      (pkgs.ncspot.override { withCover = true; })
-      prismlauncher
-      freetube
-      wireguard-tools
-    ];
+  environment.systemPackages = with pkgs; [
+    vipdf
+    yafca
+    qmk-udev-rules
+    iputils
+    zip
+    unzip
+    git
+    rsync
+    wget
+    imagemagick
+    wl-clipboard
+    libnotify
+    dunst
+    fastfetch
+    swayimg
+    slurp
+    texliveFull
+    perf
+    valgrind
+    exfatprogs
+    i3status
+    swaybg
+    python3
+    direnv
+    nix-direnv
+    obsidian
+    signal-desktop
+    discord
+    spotify
+    wireshark
+    keepassxc
+    cryptomator
+    mullvad-browser
+    tor-browser
+    anki
+    thunderbird
+    filezilla
+    solaar
+    foot
+    pavucontrol
+    veracrypt
+    tipp10
+    iamb
+    jetbrains.clion
+    jetbrains.idea
+    jetbrains.webstorm
+    jetbrains.pycharm
+    jetbrains.rust-rover
+    btop
+    foliate
+    age
+    timewarrior
+    prismlauncher
+    freetube
+    wireguard-tools
+    ungoogled-chromium
+    claude-code
+    taskwarrior3
+    (pkgs.typst.withPackages (p: [
+      math-templates
+    ]))
+  ];
 
   # Enable direnv
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
-  
+
   # Udev rules for YubiKey (and other FIDO/U2F devices)
-  hardware.gpgSmartcards.enable = true;  # optional, for GPG/PIV use
+  hardware.gpgSmartcards.enable = true; # optional, for GPG/PIV use
   services.udev.packages = [ pkgs.yubikey-personalization ];
 
   # Or, for a broader set of FIDO2/U2F tokens:
@@ -216,9 +248,13 @@
   };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.j0shk0= {
+  users.users.j0shk0 = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "docker" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "docker"
+    ]; # Enable ‘sudo’ for the user.
   };
 
   # Of course:
@@ -226,8 +262,8 @@
 
   # protonmail-bridge
   services.gnome.gnome-keyring.enable = true;
-  services.gnome.gcr-ssh-agent.enable = false;  # Avoid conflicting two ssh agents.
-  services.protonmail-bridge = { 
+  services.gnome.gcr-ssh-agent.enable = false; # Avoid conflicting two ssh agents.
+  services.protonmail-bridge = {
     enable = true;
     logLevel = "info";
   };
@@ -243,88 +279,97 @@
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
 
-  home-manager.users.j0shk0 = { config, pkgs, lib, ... }:
+  home-manager.users.j0shk0 =
+    {
+      config,
+      pkgs,
+      lib,
+      ...
+    }:
 
     let
       dots = ./dotfiles;
-    in {
+    in
+    {
 
-    # Enabling my own pdf editor.
-    xdg.desktopEntries.vipdf = {
-      name = "vipdf";
-      exec = "/home/j0shk0/Documents/code/rust/vipdf/result/bin/vipdf %f";
-      mimeType = [ "application/pdf" ];
-      terminal = false;
-    };
+      # Enabling my own pdf editor.
+      xdg.desktopEntries.vipdf = {
+        name = "vipdf";
+        exec = "vipdf %f";
+        mimeType = [ "application/pdf" ];
+        terminal = false;
+      };
 
-    home.pointerCursor = {
-      package = pkgs.adwaita-icon-theme;
-      name = "Adwaita";
-      size = 32;
-      gtk.enable = true;
-      x11.enable = true;
-    };
+      home.pointerCursor = {
+        package = pkgs.adwaita-icon-theme;
+        name = "Adwaita";
+        size = 32;
+        gtk.enable = true;
+        x11.enable = true;
+      };
 
-    programs.bash = {
-      enable = true;
-      initExtra = builtins.readFile "${dots}/.bashrc";
-    };
+      programs.bash = {
+        enable = true;
+        initExtra = builtins.readFile "${dots}/.bashrc";
+      };
 
-    programs.starship = {
-      enable = true;
-      enableBashIntegration = true;
-    };
+      programs.starship = {
+        enable = true;
+        enableBashIntegration = true;
+      };
 
-    home.packages = [ pkgs.tmux ];
+      home.packages = [ pkgs.tmux ];
 
-    home.stateVersion = "25.11";
+      home.stateVersion = "25.11";
 
-    programs.fuzzel = {
-      enable = true;
-      settings = {
-        main = {
-          terminal = "${pkgs.foot}/bin/foot";
-          lines = 10;
-        };
-        colors = {
-          background = "1e1e2eff";
-          text = "cdd6f4ff";
-          match = "89b4faff";
-          selection = "585b70ff";
-          selection-text = "cdd6f4ff";
-          selection-match = "89b4faff";
-          border = "89b4faff";
+      programs.fuzzel = {
+        enable = true;
+        settings = {
+          main = {
+            terminal = "${pkgs.foot}/bin/foot";
+            lines = 10;
+            line-height = 28;
+          };
+          colors = {
+            background = "1e1e2eff";
+            text = "cdd6f4ff";
+            match = "89b4faff";
+            selection = "585b70ff";
+            selection-text = "cdd6f4ff";
+            selection-match = "89b4faff";
+            border = "89b4faff";
+          };
         };
       };
-    };
 
-    programs.yazi = {
+      programs.yazi = {
         enable = true;
         shellWrapperName = "y";
-        flavors.catppuccin-mocha = "${pkgs.fetchFromGitHub {
-          owner = "yazi-rs";
-          repo = "flavors";
-          rev = "20b47bfd78880c2674899597fd26bc01b21ff48c";
-          hash = "sha256-NGnfrQdsnQITKCZ0oh6DCxeCR2ozJoPAZetsi3ghHAI=";
-        }}/catppuccin-mocha.yazi";
+        flavors.catppuccin-mocha = "${
+          pkgs.fetchFromGitHub {
+            owner = "yazi-rs";
+            repo = "flavors";
+            rev = "20b47bfd78880c2674899597fd26bc01b21ff48c";
+            hash = "sha256-NGnfrQdsnQITKCZ0oh6DCxeCR2ozJoPAZetsi3ghHAI=";
+          }
+        }/catppuccin-mocha.yazi";
         theme.flavor.dark = "catppuccin-mocha";
-    };
-    
-    home.file = {
-      ".gitconfig".source = "${dots}/.gitconfig";
-      ".vimrc".source = "${dots}/.vimrc";
-    };
+      };
 
-    xdg.configFile = {
-      "tmux/tmux.conf".source = "${dots}/.tmux.conf";
-      "sway/config".source = "${dots}/config";
-      "dunst/dunstrc".source = "${dots}/dunstrc";
-      "foot/foot.ini".source = "${dots}/foot.ini";
-      "i3status/config".source = "${dots}/i3status.conf";
-      "starship.toml".source = "${dots}/starship.toml";
-    };
+      home.file = {
+        ".gitconfig".source = "${dots}/.gitconfig";
+      };
 
-  };
+      xdg.configFile = {
+        "tmux/tmux.conf".source = "${dots}/.tmux.conf";
+        "sway/config".source = "${dots}/config";
+        "dunst/dunstrc".source = "${dots}/dunstrc";
+        "foot/foot.ini".source = "${dots}/foot.ini";
+        "i3status/config".source = "${dots}/i3status.conf";
+        "starship.toml".source = "${dots}/starship.toml";
+      };
+
+    };
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -380,4 +425,3 @@
   system.stateVersion = "25.11"; # Did you read the comment?
 
 }
-
