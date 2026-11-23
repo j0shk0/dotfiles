@@ -7,19 +7,31 @@ That said, feel free to copy anything you find useful.
 
 # What's in here
 
-- `configuration.nix` — my NixOS system configuration.
+- `configuration.nix` — my NixOS system configuration, including the home-manager setup that links everything below.
+- `neovim.nix` — my Neovim config as a nixvim module (LSP, snippets, plugins), toggled via `dotfiles.neovim.enable`.
+- `pkgs/` — small Nix packages I build myself and pull in via `callPackage`:
+    - `vipdf` — a minimal PDF viewer written in Rust with vim keybindings
+    - `yafca` — "yet another finance cli app" (installs the `fca` binary)
+    - `math-templates` — Typst templates
 - `dotfiles/`
-    - `.vimrc`, `.bashrc`, `.tmux.conf` — editor & shell
+    - `.bashrc`, `.tmux.conf` — shell & tmux
     - `config` — Sway (Wayland) config
     - `foot.ini`, `dunstrc`, `i3status.conf`, `starship.toml` — terminal, notifications, status bar, prompt
-    - `.Xressources` — xterm colours (Solarized) - _this is not used anymore but I'll keep it anyway_.
+    - `typst.snippets` — UltiSnips snippets wired into Neovim by `neovim.nix`
+    - `IMG_3177_Mocha.png`, `IMG_3177_dim.jpeg` — wallpaper and swaylock background (expected in `~/Pictures/`)
+    - Kept for non-NixOS machines, superseded by the Nix setup above:
+        - `.vimrc`, `init.lua` — my old plain vim / Neovim configs
+        - `.Xressources` — xterm colours (Solarized) - _this is not used anymore but I'll keep it anyway_.
 
-> Note: `hardware-configuration.nix` and my personal `.gitconfig` are
+> Note: `hardware-configuration.nix` and my personal `.gitconfig` and `.taskrc` are
 > **not** included (see `.gitignore`). You must provide your own.
 > Same for the Factorio module imported. 
 > Since recently the whole setup is using Catppuccin Mocha as theme.
 
 # Vim Setup
+
+I switched back to neovim but the normal vim setup is afaik still functional. 
+It can easily be turned into a light version which is useful on weak systems. It will therefore be kept.
 
 This is a setup intended for Linux. It should work on macOS and Windows (via WSL)
 as well. You need a version of vim that was compiled with Python support.
